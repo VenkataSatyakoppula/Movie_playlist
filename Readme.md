@@ -10,4 +10,4 @@ On the public page, different movie lists created by that user will be displayed
 
 Deployed here [link](http://194.195.118.196/) 
 
-- It doensn't have a domain name and SSL certificate for now
+- It doesn't have a domain name and SSL certificate for now
