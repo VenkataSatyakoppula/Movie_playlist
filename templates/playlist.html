@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% block title %} Playlist {% endblock %}
+
+{% block content %}
+{%block playlist %}
+<div class="container mt-5">
+    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Add new playlist
+      </button>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Add a Playlist</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="myform" method="post" action="{% url 'playlist' %}">
+                    {% csrf_token %}
+                    <span class="fs-5">Enter Name of the Playlist<span> 
+                    <input type="text" name="playlist" />
+                </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" onclick="document.forms[0].submit();return false;">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+{% if data %}
+  <div class="list-group">
+      {% for index in data %}
+      <div  class="list-group-item" aria-current="true">
+        <div class="d-flex w-100 justify-content-between ">
+          <a class="mb-1 text-dark fs-5" style="text-decoration:none" href="{% url 'specific' pk=index.id %}">{{index.playlist_name}}</a>
+          <span class="pull-right">
+            <a class="btn btn-outline-success" onclick="toggle({{index.id}})" id="pbutton-{{index.id}}">
+              {% if index.ispublic %}
+                  <span id="public_button" class="glyphicon glyphicon-play" aria-hidden="true">Make Private</span>
+              {% else %}
+              <span id="public_button" class="glyphicon glyphicon-play" aria-hidden="true">Make Public</span>
+              {% endif %}
+          </a>
+          {% if index.ispublic %}
+          <span id="share_button-{{index.id}}">
+            <a class="btn btn-primary" onclick="share({{index.id}})" >
+              <span id="share_button" class="glyphicon glyphicon-play" aria-hidden="true" data-bs-toggle="modal" data-bs-target="#Modal" >Share</span>
+            </a>
+          </span>
+          {% else %}
+          <span id="share_button-{{index.id}}">
+            <a class="btn btn-primary disabled" style="pointer-events: none;" >
+              <span class="glyphicon glyphicon-play" aria-hidden="true">Share</span>
+            </a>
+          </span>
+          {% endif %}
+         
+            <a class="btn btn-danger" href="{%url 'delete_specific' pk=index.id%}">
+              
+                <span class="glyphicon glyphicon-play" aria-hidden="true">Delete</span>
+            </a>
+        </span>
+        </div>
+      </div>
+         
+      {% endfor %}
+  </div>
+{% endif %} 
+{% comment %} 
+Modal for share 
+{% endcomment %}
+<div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Share..</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div  class="d-flex flex-column align-items-center">
+        <h5 >Public share link</h5>
+          <a href="#" id="link" class="fs-4">hello</a>
+          <button class="btn btn-success w-50 mt-3" id="clip_board_copy">Copy Link!!</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  function toggle(id) {
+      url = "{% url 'make_public' 123 %}".replace(/123/,id.toString());
+      $.get(url, function(data,status){
+        //var val= $("#public_button").text()
+        const arr = data.split(",")
+        var buttonid  = "#pbutton-123".replace(/123/,arr[1].toString());
+        var public_button_id  = "#share_button-123".replace(/123/,arr[1].toString());
+        if(arr[0].toString() != "True"){
+          $(buttonid).html(`<span id="public_button" class="glyphicon glyphicon-play" aria-hidden="true">Make Public</span>`)
+          $(public_button_id).html(`
+          <a class="btn btn-primary disabled" style="pointer-events: none;">
+            <span class="glyphicon glyphicon-play" aria-hidden="true">Share</span>
+          </a>
+          `)
+
+        }else{
+          $(buttonid).html(`
+          <span id="public_button" class="glyphicon glyphicon-play" aria-hidden="true">Make Private</span>
+          `)
+          $(public_button_id).html(`
+          <a class="btn btn-primary" onclick="share(${arr[1].toString()})">
+            <span class="glyphicon glyphicon-play" aria-hidden="true" data-bs-toggle="modal" data-bs-target="#Modal">Share</span>
+          </a>
+          `)
+        }
+  });
+};
+    function share(id){
+        domain="127.0.0.1:8000"
+        url = "{% url 'specific' 123 %}".replace(/123/,id.toString());
+        var public_button_id  = "#share_button-123".replace(/123/,id.toString());
+        $("#link").html(`${domain}${url}`)
+        $("#link").attr("href",`${url}`)
+        $("#clip_board_copy").html("Copy Link!!")
+    }
+    $("#clip_board_copy").click(function(){
+      var copyText = $("#link").text()
+      navigator.clipboard.writeText(copyText);
+      $("#clip_board_copy").html("Copied to clipboard!!")
+    })
+
+
+</script>
+{% endblock playlist %}
+</div>
+
+{% endblock content %}

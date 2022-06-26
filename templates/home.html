@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block title %} Home page {% endblock %}
+{% block content %}
+{% for message in messages%}
+    {% if 'error' in message.tags %}
+        <div class="alert alert-danger" role="alert"> {{ message }} !!</div>
+    {% else %}
+        <div class="alert alert-success" role="alert"> {{ message }} </div>
+    {% endif %}
+
+{%endfor%}
+
+{% if user.is_authenticated %}
+  <h1 class="mt-3"> Hello {{user.username|title}}!</h1>
+{% else %}
+  <h4 class="display-4 mt-3"> Welcome!</h4>
+  <h3 class="display-5 mt-3">Login to create and add movies to playlists</h3>
+{% endif %}
+
+{% load static %}
+
+
+<form method="POST">
+    {%csrf_token%}
+    <label for="DataList" class="form-label fs-3 mt-4">Movie Search</label>
+    <input class="form-control" list="datalistOptions" id="DataList" placeholder="Search with Movie name or imdbid.." name="search">
+    <datalist id="datalistOptions">
+    <option value="RRR">
+    <option value="Dune">
+    <option value="Don">
+    <option value="tt0816692">
+    </datalist>
+    <div class="text-center mb-5">
+        <button type="submit" class="btn btn-outline-primary w-25 mt-3">Search</button>
+    </div>
+    
+</form>
+
+{%if 'True' in data.Response %}
+<div class="container d-flex justify-content-center">
+<div class="card" style="width: 23rem;">
+    {%if 'N/A' in data.Poster %}
+    <img class="card-img-top" src="{% static '/images/img.jpg' %}" alt="{{data.Title}}">
+    {%else%}
+    <img class="card-img-top" src="{{data.Poster}}" alt="{{data.Title}}">
+    {%endif%}
+    <div class="card-body">
+      <h5 class="card-title text-center fw-bold fs-3">{{data.Title}}</h5>
+      {% comment %} <p class="card-text">{{data.Plot}}</p> {% endcomment %}
+      <ul class="list-group d-flex flex-row justify-content-center">
+        <li class="list-group-item">{{data.Genre}}</li>
+        <li class="list-group-item">{{data.Language}}</li>
+    </ul>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">Released: {{data.Released}}</li>
+        <li class="list-group-item">Runtime: {{data.Runtime}}</li>
+        <li class="list-group-item">Director: {{data.Director}}</li>
+        {% for md in data.Ratings %}
+        <li class="list-group-item">{{md.Source}} - {{md.Value}}</li>
+        {% endfor %}
+      </ul>
+      {%if user.is_authenticated %}
+      {%if present %}
+      <a href="#" class="btn btn-success disabled">Already added</a>
+      {% else %}
+      <a href="#" data-bs-toggle="modal" data-bs-target="#Modal" class="btn btn-primary">Add to playlist</a>
+      
+      {%endif%}
+      {%endif%}
+      <a href="https://www.imdb.com/title/{{data.imdbID}}/" target="_blank" class="btn btn-primary">More info</a>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ModalLabel">Select a Playlist</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% if playlist %}
+        <div class="list-group">
+        {% for index in playlist %}
+        <a href="{% url 'add_to_playist' id=data.imdbID id2=index.id name=data.Title %}" class="list-group-item list-group-item-action list-group-item-secondary">{{index.playlist_name}}</a>
+        {% endfor %}
+        
+      </div>
+      {% else %}
+          <h4 class="fs-5">Create a playlist</h4>
+      {% endif %}
+    </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary" href="{%url 'playlist'%}">New Playlist</a>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{%if 'False' in data.Response%}
+<div class="container">
+      <h4 class="fs-3 fw-bold text-center">Movie data Not Found or Internal error<h4>
+</div>
+{%endif%}
+
+{% endblock%}

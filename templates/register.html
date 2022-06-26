@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %} Register Page {% endblock%}
+
+{% block content %}
+{%if messages%}
+{% for message in messages%}
+    <div class="alert alert-danger" role="alert"> {{ message }} </div>
+{%endfor%}
+{%endif%}
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="InputName" class="form-label">Username</label>
+        <input type="text" name="name" class="form-control" id="InputName">
+        {% for err in form.name.errors %}
+        <div class="alert alert-primary" role="alert"> {{ err }} </div>
+        {% endfor %}
+    </div>
+
+    <div class="mb-3">
+        <label for="InputEmail" class="form-label">Email address</label>
+        <input type="email" name="email" class="form-control" id="InputEmail" aria-describedby="emailHelp">
+        {% for err in form.email.errors %}
+        <div class="alert alert-primary" role="alert"> {{ err }} </div>
+        {% endfor %}
+    </div>
+
+    <div class="mb-3">
+        <label for="InputPassword" class="form-label">Password</label>
+        <input type="password" class="form-control" id="InputPassword1"  name="password">
+        {% for err in form.password.errors %}
+        <div class="alert alert-primary" role="alert"> {{ err }} </div>
+        {% endfor %}
+    </div>
+    <div class="mb-3">
+        <label for="Inputcpassword" class="form-label">Confirm password</label>
+        <input type="password" class="form-control" id="Inputcpassword" name="cpassword">
+        {% for err in form.non_field_errors %}
+        <div class="alert alert-primary" role="alert"> {{ err }} </div>
+        {% endfor %}
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+<div class="mt-3">
+    <span class="m-3">Login?</span>
+    <a href="{% url  "login" %}" class="btn btn-outline-secondary">Login</a>
+</div>
+{% endblock content %}
+

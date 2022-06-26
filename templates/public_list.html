@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %} Public playlists {% endblock %}
+{% block content %}
+
+<div class="container mt-5">
+  <h4 class="display-5">Playlists of other users</h4>
+    <div class="list-group">
+        {% for index in public_data reversed%}
+        <div  class="list-group-item list-group-item" aria-current="true">
+          <div class="d-flex w-100 justify-content-between ">
+            <a class="mb-1 text-dark fs-5" style="text-decoration:none" href="{% url 'specific' pk=index.id %}">{{index.playlist_name}}</a>
+          </div>
+          <div class="text-right w-100">
+            <span class="text-info font-weight-bold">Made by - {{index.user.username}}</span>
+          </div>
+        </div>
+           
+        {% endfor %}
+    </div> 
+</div>
+
+{% endblock content %}

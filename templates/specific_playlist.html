@@ -1,0 +1,77 @@
+{% extends 'playlist.html' %}
+{% block title %} {{playlist.playlist_name}} {% endblock%}
+{%block playlist %}
+{% for message in messages %}
+
+<div class="alert alert-success" role="alert">
+  {{message}}
+</div>
+{% endfor %}
+<div class="container mt-5">
+  <a class="btn btn-primary mb-3 "  href="{{request.META.HTTP_REFERER|escape}}">Back</a>
+    <h4 class="text-center mb-3">Movies List in {{playlist.playlist_name}}<h4>
+    <div class="d-flex flex-row justify-content-between flex-wrap">
+    {% for index in movies %}
+    <div class="card mt-3" style="width: 15rem;">
+        <a id="movie{{index.id}}" href="#" data-value="{{index.imdb_id}}" data-bs-toggle="modal" data-bs-target="#Modal" class="card-body" style="text-decoration:none">
+          <h5  class="card-title">{{ index.name }}</h5>
+        </a>
+        {% if flag %}
+          <a class="btn btn-outline-danger" href="{%url 'movie_delete' playlist_id=playlist.pk pk=index.id%}">
+            <span class="glyphicon glyphicon-play" aria-hidden="true">Delete</span>
+          </a>
+          {% endif %}
+        </span>
+      </div>
+      {% endfor %}
+      <div>
+        <div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabel">Movie Detail</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body" id="modal_body">
+                <h1>{{payload}}</h1>
+            </div>
+              <div class="modal-footer" id="modal_footer">
+                <a href="#" class="btn btn-info" data-bs-dismiss="modal">More Info</a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% for index in movies %}
+        <script type="text/javascript">
+          $("#movie{{index.id}}").click(function () {
+              var id=$(this).data("value");
+              url = "{% url 'movie_view' 123 %}".replace(/123/,id.toString());
+              $.get(url, function(data, status){
+                $("#modal_body").html(
+                  `
+                  <img class="card-img-top" src="${data.Poster}" alt="no image">
+                  <h5 class="card-title text-center fw-bold fs-3">${data.Title}</h5>
+                  {% comment %} <p class="card-text">{{data.Plot}}</p> {% endcomment %}
+                  <ul class="list-group d-flex flex-row justify-content-center">
+                    <li class="list-group-item">${data.Genre}</li>
+                    <li class="list-group-item">${data.Language}</li>
+                </ul>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Released: ${data.Released}</li>
+                    <li class="list-group-item">Runtime: ${data.Runtime}</li>
+                    <li class="list-group-item">Director: ${data.Director}</li>
+                  </ul>`
+                );
+                $("#modal_footer").html(
+                  `
+                  <a href="https://www.imdb.com/title/${data.imdbID}/" class="btn btn-info" target="_blank">More Info</a>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  `
+                ); 
+          });
+        });
+        </script>
+        {%endfor%}
+</div>
+{%endblock playlist%}

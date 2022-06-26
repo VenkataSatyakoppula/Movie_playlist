@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %} Profile Page {% endblock title %}
+
+{% block content %}
+<form method="POST" class="mt-5">
+    {% csrf_token %}
+  <div class="form-group">
+    <label for="InputEmail">Email address</label>
+    <input type="email" class="form-control" name="email" id="InputEmail" value="{{user.email}}"aria-describedby="emailHelp">
+  </div>
+  {% for err in form.email.errors %}
+  <div class="alert alert-primary" role="alert"> {{ err }} </div>
+  {% endfor %}
+    <div class="form-group mt-3">
+    <label for="Username">Username</label>
+    <input type="text" value="{{user.username}}" name="username" class="form-control" id="Username">
+  </div>
+  {% for err in form.username.errors %}
+  <div class="alert alert-primary" role="alert"> {{ err }} </div>
+  {% endfor %}
+  <div class="form-group mt-3">
+    <label for="fname">First name</label>
+    <input type="text" value="{{user.first_name}}" name="first_name" class="form-control" id="fname">
+    <label for="lname">last name</label>
+    <input type="text" value="{{user.last_name}}" name="last_name" class="form-control" id="lname">
+  </div>
+  {% for err in form.first_name.errors %}
+  <div class="alert alert-primary" role="alert"> {{ err }} </div>
+  {% endfor %}
+  <a href="{%url 'change_password' %}"class="btn btn-outline-primary mt-3">Change password</a>
+  <button type="submit" class="btn btn-primary mt-3">Save</button>
+</form>
+<a href="{%url 'delete_user' %}"class="btn btn-danger mt-3">Delete my account</a>
+
+{% endblock content %}
