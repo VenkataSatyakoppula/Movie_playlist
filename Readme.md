@@ -5,9 +5,23 @@
 - They can create a list of movies by adding the movies to lists.
 On the public page, different movie lists created by that user will be displayed. 
 - These lists can be either public ( anyone with a link to the list can see this ) or private ( only the person who created can see this list ).
+## .env file
+DJANGO_KEY= django-secret-key\
+OMDB_API_KEY= your-omdbapi-key\
+get OMDB API-KEY from https://www.omdbapi.com/apikey.aspx
+## Usage
+```
+cd <project-directory>
+```
+```
+pip install -r requirements.txt
+```
+```
+python manage.py runserver
+```
+```
+python manage.py runserver
+```
 
-## Application Deployed in a linux server
-
+## Application Deployed in a Linux server
 Deployed here [link](http://194.195.118.196/) 
-
-- It doesn't have a domain name and SSL certificate for now
