@@ -22,6 +22,9 @@ python manage.py runserver
 ```
 python manage.py runserver
 ```
-
+## Docker Build command
+```
+docker build --build-arg DJANGO_KEY=django-secret --build-arg OMDB_API_KEY=omdbapi-key -t movie_playlist  .
+```
 ## Application Deployed in a Linux server
 Deployed here [link](http://194.195.118.196/) 
