@@ -27,4 +27,7 @@ python manage.py runserver
 docker build --build-arg DJANGO_KEY=django-secret --build-arg OMDB_API_KEY=omdbapi-key -t movie_playlist  .
 ```
 ## Application Deployed in a Linux server
+Test Account
+email: test@gmail.com
+password: 1234
 Deployed here [link](https://projects.venkata.work)
